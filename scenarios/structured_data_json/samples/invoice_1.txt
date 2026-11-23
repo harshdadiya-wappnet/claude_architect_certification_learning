@@ -1,0 +1,12 @@
+ACME Supplies Pvt Ltd
+Invoice No: INV-2026-0142        Date: 14 Nov 2026
+
+Bill to: Wappnet Systems
+
+1  USB-C Cable 2m        qty 10   @ 150.00   = 1,500.00
+2  Laptop Stand          qty 2    @ 1,200.00 = 2,400.00
+
+Subtotal: 3,900.00
+GST (18%): 702.00
+Total due: INR 4,602.00
+Payment terms: net 15
