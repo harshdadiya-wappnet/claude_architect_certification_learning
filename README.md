@@ -34,7 +34,7 @@ The exam presents 4 scenarios drawn at random from these 6.
 | # | Scenario | Primary domains | Folder |
 |---|---|---|---|
 | 1 | Customer Support Resolution Agent | Agentic architecture, Tool design and MCP, Context management | `scenarios/customer_support_resolution/` (in progress) |
-| 2 | Code Generation with Claude Code | Claude Code configuration and workflows, Context management | `scenarios/code_generation_with_claude_code/` (expense tracker practice app) |
+| 2 | Code Generation with Claude Code | Claude Code configuration and workflows, Context management | `scenarios/code_generation_with_claude_code/` (completed; expense tracker practice app) |
 | 3 | Multi-Agent Research System | Agentic architecture, Tool design and MCP, Context management | not started |
 | 4 | Developer Productivity with Claude | Tool design and MCP, Claude Code configuration, Agentic architecture | not started |
 | 5 | Claude Code for Continuous Integration | Claude Code configuration, Prompt engineering and structured output | not started |
