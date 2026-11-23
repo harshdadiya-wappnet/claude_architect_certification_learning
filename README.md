@@ -37,8 +37,8 @@ The exam presents 4 scenarios drawn at random from these 6.
 | 2 | Code Generation with Claude Code | Claude Code configuration and workflows, Context management | `scenarios/code_generation_with_claude_code/` (completed; expense tracker practice app) |
 | 3 | Multi-Agent Research System | Agentic architecture, Tool design and MCP, Context management | `scenarios/multi_agent_architecture/` (implemented; Streamlit app, see below) |
 | 4 | Developer Productivity with Claude | Tool design and MCP, Claude Code configuration, Agentic architecture | `scenarios/developer_productivity_claude/` (implemented; Streamlit app, see below) |
-| 5 | Claude Code for Continuous Integration | Claude Code configuration, Prompt engineering and structured output | not started |
-| 6 | Structured Data Extraction | Prompt engineering and structured output, Context management | not started |
+| 5 | Claude Code for Continuous Integration | Claude Code configuration, Prompt engineering and structured output | skipped (not planned) |
+| 6 | Structured Data Extraction | Prompt engineering and structured output, Context management | `scenarios/structured_data_json/` (implemented; CLI, see below) |
 
 ### Multi-Agent Research System (scenario 3)
 
@@ -80,6 +80,24 @@ streamlit run scenarios/developer_productivity_claude/main.py
 - **Guardrails (`main.py`):** a `PreToolUse` hook (`bash_guard`) allows only `git status/log/diff/show/branch/remote` with a safe flag list, plus `git clone https://github.com/<owner>/<repo> [folder]` (no flags) when the working directory is inside `workspace/`. Shell metacharacters are rejected. GitHub MCP is limited to an explicit read-only tool list and write tools are in `disallowed_tools`. A cloned repo's own `.git/config` is not sandboxed, so clone only repos you trust.
 - **UI:** the answer streams as plain text; tool calls are in a collapsible `🔧 Tool calls (N)` box above it. Conversation memory uses the SDK `resume` session id; **New conversation** resets it.
 - **Files:** `agent.py` (agent definition and prompt), `external_tools.py` (GitHub MCP config), `main.py` (app, guardrails).
+
+### Structured Data Extraction (scenario 6)
+
+A CLI agent that turns invoice text into JSON matching a Pydantic schema, using the Claude Agent SDK.
+
+Run from the **repo root**:
+
+```bash
+python -m scenarios.structured_data_json.main
+# then paste invoice text on one line, or:  /file scenarios/structured_data_json/samples/invoice_1.txt
+```
+
+- **Auth:** `CLAUDE_CODE_OAUTH_TOKEN` from `.env`, same as scenario 1.
+- **Structured output:** `output_format` is set to the `Invoice` JSON schema (`schemas.py`); the validated result is read from `ResultMessage.structured_output` and re-checked with Pydantic.
+- **Validation tool:** the agent calls an MCP tool, `validate_extraction` (`tools.py`), that checks the schema and the arithmetic (line items, subtotal, tax, total, date and currency formats), and fixes errors before answering.
+- **No guessing:** fields the document does not state are `null`, with the reason in `notes`.
+- **Tools:** built-in tools are off (`tools=[]`); only the validator is allowed, so documents come in through `/file`.
+- **Samples:** `samples/` has a clean invoice and one with inconsistent totals.
 
 ## Development
 
