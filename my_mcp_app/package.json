@@ -1,0 +1,19 @@
+{
+  "name": "render-job-board",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit && cross-env INPUT=mcp-app.html vite build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.5",
+    "cross-env": "^10.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.0.0",
+    "vite-plugin-singlefile": "^2.3.0"
+  }
+}
