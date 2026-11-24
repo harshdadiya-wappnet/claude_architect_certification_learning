@@ -17,6 +17,7 @@ dependencies = [
     "mcp[cli]==2.3.0",
     "prompt-toolkit==3.0.53",
     "streamlit==1.67.0",
+    "sympy==1.14.0",
 ]
 
 [project.optional-dependencies]

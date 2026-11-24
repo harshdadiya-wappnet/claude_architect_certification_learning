@@ -24,6 +24,7 @@ cp .env.example .env           # then set ANTHROPIC_API_KEY
 | `examples/` | Small API demos: simple chat, tool use, structured output (plain and streaming), Bedrock |
 | `cli_project_COMPLETE/` | Complete CLI chat project with an MCP server and client (has its own README) |
 | `my_mcp_app/` | MCP app with a TypeScript/Vite UI (has its own README; needs `npm install`) |
+| `tasks/` | Exam-guide task practice, one folder per task statement (see below) |
 | `scenarios/` | One folder per exam scenario (see below) |
 | `.claude/` | Claude Code commands, hooks and settings for this workspace |
 
@@ -98,6 +99,31 @@ python -m scenarios.structured_data_json.main
 - **No guessing:** fields the document does not state are `null`, with the reason in `notes`.
 - **Tools:** built-in tools are off (`tools=[]`); only the validator is allowed, so documents come in through `/file`.
 - **Samples:** `samples/` has a clean invoice and one with inconsistent totals.
+
+## Exam guide tasks
+
+Small focused exercises for individual task statements in the exam guide, under `tasks/`.
+
+| Task | Folder | Status |
+|---|---|---|
+| 1.1 Agentic loops for autonomous task execution | `tasks/agentic_architecture_and_orchastration/task_1_1/` | implemented |
+
+### Task 1.1: Agentic loop with math tools
+
+A chat CLI where Claude decides when to call math tools (`calculate`, `solve_equation`, `solve_quadratic`, built on `sympy`) and the loop feeds results back until it is done.
+
+Run from the **repo root**:
+
+```bash
+python -m tasks.agentic_architecture_and_orchastration.task_1_1.agentic_loops
+# try: solve x**2+2*x-6=0
+```
+
+- **Loop control:** `stop_reason` drives the loop. `"tool_use"` runs the tools and calls the model again, `"end_turn"` stops. `max_tokens`, `refusal` and other reasons are reported explicitly. `MAX_TOOL_ITERATIONS` is only a runaway safety guard, and if it trips, pending tool calls are answered with an error result so the history stays valid.
+- **History:** full assistant content blocks (including `tool_use`) are stored, and all `tool_result` blocks for a turn go back in one user message.
+- **Model-driven:** no fixed tool sequence; the code only executes what Claude asks for. Tool errors are returned as `is_error` results so the model can recover.
+- **Static system prompt:** thinking blocks are signed against the system prompt, so a prompt that changes between requests (for example a live timestamp) causes a 400 error. The date and time are instead added to each user message as a `[Context: ...]` tag.
+- **Files:** `agentic_loops.py` (loop and CLI), `tools.py` (tool functions, schemas, registry, executor).
 
 ## Development
 
