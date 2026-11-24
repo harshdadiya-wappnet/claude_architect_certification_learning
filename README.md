@@ -107,6 +107,7 @@ Small focused exercises for individual task statements in the exam guide, under 
 | Task | Folder | Status |
 |---|---|---|
 | 1.1 Agentic loops for autonomous task execution | `tasks/agentic_architecture_and_orchastration/task_1_1/` | implemented |
+| 1.2 Coordinator-subagent multi-agent systems | `tasks/agentic_architecture_and_orchastration/task_1_2/` | implemented |
 
 ### Task 1.1: Agentic loop with math tools
 
@@ -124,6 +125,33 @@ python -m tasks.agentic_architecture_and_orchastration.task_1_1.agentic_loops
 - **Model-driven:** no fixed tool sequence; the code only executes what Claude asks for. Tool errors are returned as `is_error` results so the model can recover.
 - **Static system prompt:** thinking blocks are signed against the system prompt, so a prompt that changes between requests (for example a live timestamp) causes a 400 error. The date and time are instead added to each user message as a `[Context: ...]` tag.
 - **Files:** `agentic_loops.py` (loop and CLI), `tools.py` (tool functions, schemas, registry, executor).
+
+### Task 1.2: Coordinator with subagents
+
+A coordinator agent delegates to specialist subagents on the raw Messages API (no Agent SDK), reusing the shared tools in `task_1_2/tools.py` (calculator tools and `read_file`).
+
+```
+user -> coordinator -> math_agent       (calculate, solve_equation, solve_quadratic)
+                    -> file_agent       (read_file)
+                    -> synthesis_agent  (no tools)
+```
+
+Run from the **repo root** (imports are absolute, so use `-m`):
+
+```bash
+python -m tasks.agentic_architecture_and_orchastration.task_1_2.main
+# full pipeline: read the two files in task_1_2/samples/, compute total revenue and the break-even prices, then summarise
+# minimal:       What is 15% of 2480?
+```
+
+- **Hub-and-spoke:** subagents never talk to each other; the coordinator relays everything and handles errors (a failed subagent comes back as an `is_error` result and the coordinator decides whether to retry, reroute or report partial results).
+- **Isolated context:** every subagent call starts with a fresh `messages` list. Anything a subagent needs, such as numbers from a file, must be passed in `task` or `context`.
+- **Delegation as a tool:** the coordinator has one `delegate_to_subagent` tool and decides which agents to use, so a simple question can skip the full pipeline.
+- **Parallel subagents:** several delegations in one coordinator response run concurrently with `asyncio.gather`, and their results return together in one user message.
+- **Tool restriction:** each subagent only sees its own subset of `tools.py`, and the runner rejects any other tool call.
+- **Structured handoff:** `math_agent` and `file_agent` reply with JSON validated by pydantic (`Finding` = claim plus source), so attribution survives to the final answer.
+- **Loop control:** `stop_reason` ends every loop, and the iteration caps are only runaway guards. System prompts are static (see 1.1).
+- **Files:** `coordinator.py` (hub loop and delegate tool), `subagent.py` (runner, subagent definitions, report models), `tools.py`, `main.py` (CLI), `samples/` (test files).
 
 ## Development
 

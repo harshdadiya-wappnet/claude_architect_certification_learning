@@ -1,0 +1,5 @@
+Q3 Sales Report (draft)
+Region North: 12500 units at price 8
+Region South: 9800 units at price 8
+Region East: 15200 units at price 7.5
+Note: the East price is a promotional discount.

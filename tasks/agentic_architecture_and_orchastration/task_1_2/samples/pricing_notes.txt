@@ -1,0 +1,3 @@
+Pricing model notes
+Profit per period follows: profit = -x**2 + 14*x - 40, where x is the unit price.
+The break-even prices are the roots of -x**2 + 14*x - 40 = 0.
